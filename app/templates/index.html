@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Kubernetes Resource Quota Calculator</h1>
-    <form method="POST" action="/calculate">
+    <form method="POST" action="/calculate" id="quotaForm">
         <label for="cluster_cpu">Cluster CPU:</label>
         <input type="text" name="cluster_cpu" required><br>
 
@@ -16,12 +16,79 @@
         <input type="text" name="cluster_memory" required><br>
 
         <label for="num_namespaces">Number of Namespaces:</label>
-        <input type="number" name="num_namespaces" required><br>
+        <input type="number" name="num_namespaces" id="num_namespaces" required><br>
 
         <label for="buffer_percentage">Buffer Percentage:</label>
         <input type="text" name="buffer_percentage" placeholder="Enter buffer percentage (default is 0)"><br>
 
+        <!-- Container for dynamically added namespace inputs -->
+        <div id="namespaceInputsContainer"></div>
+
+        <button type="button" onclick="addNamespace()">Add Namespace</button>
         <button type="submit">Calculate</button>
     </form>
+
+    <script>
+        function addNamespace() {
+            var numNamespacesInput = document.getElementById("num_namespaces");
+            var numNamespaces = parseInt(numNamespacesInput.value);
+
+            // Separate counter for exceptions
+            var numExceptions = 0;
+
+            var container = document.getElementById("namespaceInputsContainer");
+            var namespaceNumber = prompt("Enter the namespace number for the exception:");
+
+            // Validate that the exception namespace number is not larger than the total number of namespaces
+            if (namespaceNumber > numNamespaces) {
+                alert("Exception namespace number cannot be larger than the total number of namespaces.");
+                return;
+            }
+
+            // Create a container for the namespace block
+            var namespaceContainer = document.createElement("div");
+            namespaceContainer.id = "namespaceContainer_" + namespaceNumber;
+
+            // Create input fields for the new namespace
+            var cpuInput = document.createElement("input");
+            cpuInput.type = "text";
+            cpuInput.name = "namespace_" + namespaceNumber + "_cpu";
+            cpuInput.placeholder = "Enter CPU exception for Namespace " + namespaceNumber;
+
+            var memoryInput = document.createElement("input");
+            memoryInput.type = "text";
+            memoryInput.name = "namespace_" + namespaceNumber + "_memory";
+            memoryInput.placeholder = "Enter Memory exception for Namespace " + namespaceNumber;
+
+            // Create delete button for the namespace
+            var deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.textContent = "Delete";
+            deleteButton.onclick = function() {
+                // Remove the entire namespace block
+                container.removeChild(namespaceContainer);
+                numExceptions--; // Decrement the counter on deletion
+            };
+
+            // Append inputs and delete button to the container
+            namespaceContainer.appendChild(document.createElement("br"));
+            namespaceContainer.appendChild(document.createElement("br"));
+            namespaceContainer.appendChild(document.createTextNode("Namespace " + namespaceNumber + " Exception:"));
+            namespaceContainer.appendChild(document.createElement("br"));
+            namespaceContainer.appendChild(document.createTextNode("CPU:"));
+            namespaceContainer.appendChild(cpuInput);
+            namespaceContainer.appendChild(document.createElement("br"));
+            namespaceContainer.appendChild(document.createTextNode("Memory:"));
+            namespaceContainer.appendChild(memoryInput);
+            namespaceContainer.appendChild(document.createElement("br"));
+            namespaceContainer.appendChild(deleteButton);
+
+            // Append the entire namespace block to the container
+            container.appendChild(namespaceContainer);
+
+            // Increment the counter for exceptions
+            numExceptions++;
+        }
+    </script>
 </body>
 </html>

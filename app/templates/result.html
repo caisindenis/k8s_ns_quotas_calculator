@@ -4,15 +4,50 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result</title>
+    <title>Results</title>
 </head>
 <body>
-    <h2>Calculation Result:</h2>
+    <h2>Namespace Resource Allocations:</h2>
+    <table border="1">
+        <tr>
+            <th>Namespace Number</th>
+            <th>Per Namespace CPU</th>
+            <th>Per Namespace Memory</th>
+        </tr>
+        {% for namespace_data in result.namespace_allocations %}
+            <tr>
+                <td>{{ namespace_data.namespace_number }}</td>
+                <td>{{ namespace_data.per_namespace_cpu }}</td>
+                <td>{{ namespace_data.per_namespace_memory }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <h2>Exception Details:</h2>
+    <table border="1">
+        <tr>
+            <th>Namespace Number</th>
+            <th>Per Namespace CPU</th>
+            <th>Per Namespace Memory</th>
+        </tr>
+        {% for exception in result.exceptions %}
+            <tr>
+                <td>{{ exception.namespace_number }}</td>
+                <td>{{ exception.cpu }}</td>
+                <td>{{ exception.memory }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Resource Allocation Results for no Exception</h2>
     <p>Per Namespace CPU: {{ result.per_namespace_cpu }}</p>
     <p>Per Namespace Memory: {{ result.per_namespace_memory }}</p>
 
-    <!-- Add these links/buttons for export -->
-    <p><a href="{{ url_for('export_excel') }}">Export to Excel</a></p>
-    <p><a href="{{ url_for('export_csv') }}">Export to CSV</a></p>
+    <h2>Cluster Input:</h2>
+        <p>Cluster CPU: {{ result.cluster_cpu }}</p>
+        <p>Cluster Memory: {{ result.cluster_memory }}</p>
+        <p>Total number of namespaces: {{ result.num_namespaces }}</p>
+        <p>Resources buffer: {{ result.buffer_percentage }} %</p>
+
+    </ul>
 </body>
 </html>
